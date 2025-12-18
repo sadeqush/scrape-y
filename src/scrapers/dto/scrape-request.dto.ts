@@ -1,8 +1,17 @@
-import { IsString, IsOptional, IsInt, Min } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  Min,
+  IsArray,
+  ArrayNotEmpty,
+} from 'class-validator';
 
 export class ScrapeRequestDto {
-  @IsString()
-  site: string;
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  sites: string[];
 
   @IsString()
   brand: string;

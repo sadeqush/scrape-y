@@ -1,5 +1,5 @@
 export declare class ScrapeRequestDto {
-    site: string;
+    sites: string[];
     brand: string;
     maxPages?: number;
 }

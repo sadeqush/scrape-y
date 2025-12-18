@@ -1,4 +1,4 @@
-import React, { useDeferredValue, useMemo, useState } from 'react';
+import React, { useDeferredValue, useEffect, useMemo, useState } from 'react';
 
 interface Brand {
   id: string | number;
@@ -15,8 +15,8 @@ interface ScrapingOptionsProps {
   onNewBrandNameChange: (value: string) => void;
   onAddBrand: () => void | Promise<void>;
   sites: string[];
-  scrapingSite: string | null;
-  onScrapeSite: (site: string) => void | Promise<void>;
+  hasActiveJob: boolean;
+  onRunScrape: (sites: string[]) => void | Promise<void>;
 }
 
 const styles = {
@@ -185,23 +185,34 @@ const styles = {
     fontWeight: 600,
     whiteSpace: 'nowrap' as const,
   },
-  siteButtons: {
+  checkboxList: {
     display: 'flex',
-    flexWrap: 'wrap' as const,
-    gap: '10px',
+    flexDirection: 'column' as const,
+    gap: '8px',
   },
-  siteButton: (disabled: boolean, active: boolean) => ({
-    padding: '10px 18px',
+  checkboxItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '10px 12px',
     borderRadius: '6px',
-    border: '1px solid transparent',
-    fontSize: '13px',
-    fontWeight: 600,
+    border: '1px solid #e5e7eb',
+    background: 'white',
+    fontSize: '14px',
     textTransform: 'capitalize' as const,
-    background: active ? '#0176d3' : disabled ? '#e2e8f0' : '#0ea5e9',
-    color: active || !disabled ? 'white' : '#94a3b8',
+  },
+  runButton: (disabled: boolean) => ({
+    marginTop: '6px',
+    padding: '12px 22px',
+    borderRadius: '6px',
+    border: 'none',
+    fontSize: '14px',
+    fontWeight: 600,
+    background: disabled ? '#e5e7eb' : '#0176d3',
+    color: disabled ? '#a1a1aa' : 'white',
     cursor: disabled ? 'not-allowed' : 'pointer',
-    boxShadow: active ? '0 2px 8px rgba(1,118,211,0.35)' : 'none',
-    transition: 'all 0.2s',
+    boxShadow: disabled ? 'none' : '0 2px 8px rgba(1,118,211,0.3)',
+    transition: 'background 0.2s',
   }),
 };
 
@@ -213,29 +224,39 @@ export const ScrapingOptions: React.FC<ScrapingOptionsProps> = ({
   onNewBrandNameChange,
   onAddBrand,
   sites,
-  scrapingSite,
-  onScrapeSite,
+  hasActiveJob,
+  onRunScrape,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedSites, setSelectedSites] = useState<string[]>(sites);
 
   const normalizedInput = newBrandName.trim().toLowerCase();
   const deferredInput = useDeferredValue(normalizedInput);
 
   const normalizedBrands = useMemo<NormalizedBrand[]>(
-    () => brands.map((brand) => ({ ...brand, lowerName: brand.name.toLowerCase() })),
+    () =>
+      brands.map((brand) => ({
+        ...brand,
+        lowerName: brand.name.toLowerCase(),
+      })),
     [brands],
   );
 
   const filteredBrands = useMemo(
     () =>
       deferredInput
-        ? normalizedBrands.filter((brand) => brand.lowerName.includes(deferredInput))
+        ? normalizedBrands.filter((brand) =>
+            brand.lowerName.includes(deferredInput),
+          )
         : normalizedBrands,
     [deferredInput, normalizedBrands],
   );
 
   const hasExactMatch = useMemo(
-    () => (normalizedInput ? normalizedBrands.some((brand) => brand.lowerName === normalizedInput) : false),
+    () =>
+      normalizedInput
+        ? normalizedBrands.some((brand) => brand.lowerName === normalizedInput)
+        : false,
     [normalizedBrands, normalizedInput],
   );
   const showAddOption = Boolean(newBrandName.trim()) && !hasExactMatch;
@@ -277,17 +298,36 @@ export const ScrapingOptions: React.FC<ScrapingOptionsProps> = ({
     }, 150);
   };
 
-  const handleScrapeClick = (site: string) => {
-    if (!selectedBrand) return;
-    onScrapeSite(site);
+  const toggleSiteSelection = (site: string) => {
+    setSelectedSites((prev) =>
+      prev.includes(site) ? prev.filter((s) => s !== site) : [...prev, site],
+    );
   };
+
+  const handleRunScrapeJob = () => {
+    if (!selectedBrand || !selectedSites.length) return;
+    onRunScrape(selectedSites);
+  };
+
+  const runScrapeJobsButtonDisabled = true;
+  useEffect(() => {
+    setSelectedSites((prev) => {
+      if (!prev.length) {
+        return sites;
+      }
+      const filtered = prev.filter((site) => sites.includes(site));
+      return filtered.length ? filtered : sites;
+    });
+  }, [sites]);
 
   return (
     <div style={styles.container}>
       <div style={styles.header}>
         <div style={styles.headerText}>
           <h2 style={styles.title}>Scraping Options</h2>
-          <p style={styles.subtitle}>Select a brand and trigger scrapers in one place</p>
+          <p style={styles.subtitle}>
+            Select a brand and trigger scrapers in one place
+          </p>
         </div>
         <span style={selectedBrand ? styles.badge : styles.badgeMuted}>
           {selectedBrand ? `Selected: ${selectedBrand}` : 'No brand selected'}
@@ -297,7 +337,9 @@ export const ScrapingOptions: React.FC<ScrapingOptionsProps> = ({
         <div style={styles.section}>
           <div>
             <span style={styles.label}>Brand name</span>
-            <p style={styles.sectionDescription}>Search existing brands or add a new one for tracking</p>
+            <p style={styles.sectionDescription}>
+              Search existing brands or add a new one for tracking
+            </p>
           </div>
           <div style={styles.inputWrapper}>
             <input
@@ -325,7 +367,10 @@ export const ScrapingOptions: React.FC<ScrapingOptionsProps> = ({
                   </div>
                 ))}
                 {showAddOption && (
-                  <div style={styles.addOption} onMouseDown={handleAddBrandClick}>
+                  <div
+                    style={styles.addOption}
+                    onMouseDown={handleAddBrandClick}
+                  >
                     Add "{newBrandName.trim()}"
                   </div>
                 )}
@@ -339,31 +384,34 @@ export const ScrapingOptions: React.FC<ScrapingOptionsProps> = ({
             <div>
               <h3 style={styles.sectionTitle}>Scrape price from sites</h3>
               <p style={styles.sectionDescription}>
-                Trigger scrapers for {selectedBrand ? selectedBrand : 'the selected brand'} across available sites
+                Trigger scrapers for{' '}
+                {selectedBrand ? selectedBrand : 'the selected brand'} across
+                available sites
               </p>
             </div>
             <span style={styles.siteBadge}>{sites.length} sites</span>
           </div>
-          <div style={styles.siteButtons}>
-            {sites.map((site) => {
-              const isActive = scrapingSite === site;
-              const isDisabled = !selectedBrand || isActive;
-              return (
-                <button
-                  type="button"
-                  key={site}
-                  style={styles.siteButton(isDisabled, isActive)}
-                  disabled={isDisabled}
-                  onClick={() => handleScrapeClick(site)}
-                >
-                  {isActive ? 'Scraping...' : `Scrape ${site}`}
-                </button>
-              );
-            })}
+          <div style={styles.checkboxList}>
+            {sites.map((site) => (
+              <label key={site} style={styles.checkboxItem}>
+                <input
+                  type="checkbox"
+                  checked={selectedSites.includes(site)}
+                  onChange={() => toggleSiteSelection(site)}
+                  style={{ width: '16px', height: '16px' }}
+                />
+                {site}
+              </label>
+            ))}
           </div>
-          {!selectedBrand && (
-            <span style={styles.helperText}>Choose a brand to enable scraping buttons.</span>
-          )}
+          <button
+            type="button"
+            style={styles.runButton(!runScrapeJobsButtonDisabled)}
+            disabled={!runScrapeJobsButtonDisabled}
+            onClick={handleRunScrapeJob}
+          >
+            Run Scrape Job
+          </button>
         </div>
       </div>
     </div>

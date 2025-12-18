@@ -5,7 +5,10 @@ import { INestApplication } from '@nestjs/common';
 
 export async function bootstrap(port?: number): Promise<INestApplication> {
   const app = await NestFactory.create(AppModule, {
-    logger: process.env.NODE_ENV === 'development' ? ['log', 'error', 'warn', 'debug'] : ['error', 'warn'],
+    logger:
+      process.env.NODE_ENV === 'development'
+        ? ['log', 'error', 'warn', 'debug']
+        : ['error', 'warn'],
   });
 
   // Enable CORS for Electron renderer

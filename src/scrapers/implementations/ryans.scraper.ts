@@ -22,7 +22,10 @@ export class RyansScraper extends BaseScraper {
     super('ryans');
   }
 
-  async searchByBrand(brandName: string, maxPages: number = 1): Promise<ProductData[]> {
+  async searchByBrand(
+    brandName: string,
+    maxPages: number = 1,
+  ): Promise<ProductData[]> {
     const allProducts: ProductData[] = [];
     const resultsPerPage = 60;
     let totalNumberOfPages: number | null = null;
@@ -38,48 +41,55 @@ export class RyansScraper extends BaseScraper {
             const $ = await this.loadPage(searchUrl);
             const products: ProductData[] = [];
             if (totalNumberOfPages === null) {
-              const totalProductsText = $('.category-pagination-section b').first().text();
+              const totalProductsText = $('.category-pagination-section b')
+                .first()
+                .text();
               const match = totalProductsText.match(/(\d[\d,]*)/);
               if (match) {
                 totalNumberOfPages = Number(match[1].replace(/,/g, ''));
-                if (!Number.isNaN(totalNumberOfPages) && totalNumberOfPages > 0) {
+                if (
+                  !Number.isNaN(totalNumberOfPages) &&
+                  totalNumberOfPages > 0
+                ) {
                   maxPages = Math.ceil(totalNumberOfPages / resultsPerPage);
                 }
               }
             }
 
             $(this.siteConfig.selectors.productList).each((i, elem) => {
-            try {
-              const $elem = $(elem);
+              try {
+                const $elem = $(elem);
 
-              const name = $elem
-                .find(this.siteConfig.selectors.productName)
-                .text()
-                .trim();
-              const priceText = $elem
-                .find(this.siteConfig.selectors.price)
-                .first()
-                .text()
-                .trim();
+                const name = $elem
+                  .find(this.siteConfig.selectors.productName)
+                  .text()
+                  .trim();
+                const priceText = $elem
+                  .find(this.siteConfig.selectors.price)
+                  .first()
+                  .text()
+                  .trim();
 
-              if (!name || !priceText) {
-                return;
+                if (!name || !priceText) {
+                  return;
+                }
+
+                const price = this.extractPrice(priceText);
+
+                const product = this.normalizeProductData({
+                  name,
+                  price,
+                  brand: brandName,
+                  site: 'ryans',
+                });
+
+                products.push(product);
+              } catch (error) {
+                this.logger.warn(
+                  `Failed to parse product ${i}: ${error.message}`,
+                );
               }
-
-              const price = this.extractPrice(priceText);
-
-              const product = this.normalizeProductData({
-                name,
-                price,
-                brand: brandName,
-                site: 'ryans',
-              });
-
-              products.push(product);
-            } catch (error) {
-              this.logger.warn(`Failed to parse product ${i}: ${error.message}`);
-            }
-          });
+            });
 
             return products;
           });
@@ -113,7 +123,9 @@ export class RyansScraper extends BaseScraper {
     } catch (error: any) {
       const status = error?.response?.status;
       if (status === 403) {
-        this.logger.warn(`Received 403 for ${url}, falling back to headless browser`);
+        this.logger.warn(
+          `Received 403 for ${url}, falling back to headless browser`,
+        );
         const page = await this.fetchWithBrowser(url);
         const content = await page.content();
         await page.context().close();

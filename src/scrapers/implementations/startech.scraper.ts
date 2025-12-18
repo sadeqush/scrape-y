@@ -96,9 +96,7 @@ export class StarTechScraper extends BaseScraper {
           }
         });
 
-        this.logger.log(
-          `Scraped ${allProducts.length} total products so far`,
-        );
+        this.logger.log(`Scraped ${allProducts.length} total products so far`);
       }
 
       this.logger.log(

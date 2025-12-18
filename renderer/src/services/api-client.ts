@@ -51,9 +51,9 @@ class ApiClient {
   }
 
   // Scrapers
-  async triggerScrape(site: string, brand: string, maxPages?: number) {
+  async triggerScrape(sites: string[], brand: string, maxPages?: number) {
     await this.initialize();
-    return this.client.post('/scrapers/scrape', { site, brand, maxPages });
+    return this.client.post('/scrapers/scrape', { sites, brand, maxPages });
   }
 
   async getScrapingJobs() {

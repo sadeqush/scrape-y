@@ -20,12 +20,12 @@ asarUnpack:
 win:
   target:
     - nsis
-  icon: resources/icons/icon.ico
+  icon: resources/icons/icon.png
 
 mac:
   target:
     - dmg
-  icon: resources/icons/icon.icns
+  icon: resources/icons/icon.png
   category: public.app-category.productivity
 
 linux:

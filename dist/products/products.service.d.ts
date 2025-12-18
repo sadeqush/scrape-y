@@ -2,6 +2,7 @@ import { Repository } from 'typeorm';
 import { Product } from '../database/entities/product.entity';
 export interface ProductFilters {
     site?: string;
+    brand?: string;
     category?: string;
     inStock?: boolean;
     minPrice?: number;

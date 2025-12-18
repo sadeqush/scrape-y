@@ -5,6 +5,7 @@ import { Product } from '../database/entities/product.entity';
 
 export interface ProductFilters {
   site?: string;
+  brand?: string;
   category?: string;
   inStock?: boolean;
   minPrice?: number;
@@ -33,6 +34,12 @@ export class ProductsService {
     if (filters.category) {
       query.andWhere('product.category = :category', {
         category: filters.category,
+      });
+    }
+
+    if (filters.brand) {
+      query.andWhere('product.brand = :brand', {
+        brand: filters.brand,
       });
     }
 

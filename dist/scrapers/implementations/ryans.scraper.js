@@ -73,11 +73,14 @@ let RyansScraper = class RyansScraper extends base_scraper_1.BaseScraper {
                         const $ = await this.loadPage(searchUrl);
                         const products = [];
                         if (totalNumberOfPages === null) {
-                            const totalProductsText = $('.category-pagination-section b').first().text();
+                            const totalProductsText = $('.category-pagination-section b')
+                                .first()
+                                .text();
                             const match = totalProductsText.match(/(\d[\d,]*)/);
                             if (match) {
                                 totalNumberOfPages = Number(match[1].replace(/,/g, ''));
-                                if (!Number.isNaN(totalNumberOfPages) && totalNumberOfPages > 0) {
+                                if (!Number.isNaN(totalNumberOfPages) &&
+                                    totalNumberOfPages > 0) {
                                     maxPages = Math.ceil(totalNumberOfPages / resultsPerPage);
                                 }
                             }

@@ -20,9 +20,10 @@ let ProductsController = class ProductsController {
     constructor(productsService) {
         this.productsService = productsService;
     }
-    async findAll(site, category, inStock, minPrice, maxPrice, search, page = 1, limit = 10000) {
+    async findAll(site, brand, category, inStock, minPrice, maxPrice, search, page = 1, limit = 10000) {
         const filters = {
             site,
+            brand,
             category,
             inStock: inStock === 'true' ? true : inStock === 'false' ? false : undefined,
             minPrice: minPrice ? parseFloat(minPrice) : undefined,
@@ -51,15 +52,16 @@ exports.ProductsController = ProductsController;
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('site')),
-    __param(1, (0, common_1.Query)('category')),
-    __param(2, (0, common_1.Query)('inStock')),
-    __param(3, (0, common_1.Query)('minPrice')),
-    __param(4, (0, common_1.Query)('maxPrice')),
-    __param(5, (0, common_1.Query)('search')),
-    __param(6, (0, common_1.Query)('page', new common_1.ParseIntPipe({ optional: true }))),
-    __param(7, (0, common_1.Query)('limit', new common_1.ParseIntPipe({ optional: true }))),
+    __param(1, (0, common_1.Query)('brand')),
+    __param(2, (0, common_1.Query)('category')),
+    __param(3, (0, common_1.Query)('inStock')),
+    __param(4, (0, common_1.Query)('minPrice')),
+    __param(5, (0, common_1.Query)('maxPrice')),
+    __param(6, (0, common_1.Query)('search')),
+    __param(7, (0, common_1.Query)('page', new common_1.ParseIntPipe({ optional: true }))),
+    __param(8, (0, common_1.Query)('limit', new common_1.ParseIntPipe({ optional: true }))),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String, String, Number, Number]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String, Number, Number]),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "findAll", null);
 __decorate([

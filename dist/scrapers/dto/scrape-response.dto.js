@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScrapedProductsDto = exports.ScrapeResponseDto = void 0;
 class ScrapeResponseDto {
     jobId;
-    site;
+    sites;
     status;
     message;
     startedAt;

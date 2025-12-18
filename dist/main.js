@@ -6,7 +6,9 @@ const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
 async function bootstrap(port) {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
-        logger: process.env.NODE_ENV === 'development' ? ['log', 'error', 'warn', 'debug'] : ['error', 'warn'],
+        logger: process.env.NODE_ENV === 'development'
+            ? ['log', 'error', 'warn', 'debug']
+            : ['error', 'warn'],
     });
     app.enableCors({
         origin: ['http://localhost:5173', 'http://localhost:3000', 'app://'],
