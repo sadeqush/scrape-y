@@ -1,0 +1,36 @@
+appId: com.scrapey.app
+productName: Scrape-Y
+copyright: Copyright © 2025
+
+directories:
+  buildResources: resources
+  output: dist-electron
+
+files:
+  - electron/dist/**/*
+  - renderer/dist/**/*
+  - dist/**/*
+  - node_modules/**/*
+  - package.json
+
+asarUnpack:
+  - node_modules/better-sqlite3/**/*
+  - node_modules/playwright/**/*
+
+win:
+  target:
+    - nsis
+  icon: resources/icons/icon.ico
+
+mac:
+  target:
+    - dmg
+  icon: resources/icons/icon.icns
+  category: public.app-category.productivity
+
+linux:
+  target:
+    - AppImage
+    - deb
+  icon: resources/icons/icon.png
+  category: Utility
