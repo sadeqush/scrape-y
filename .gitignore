@@ -1,1 +1,18 @@
 node_modules
+
+# build outputs
+/dist
+/dist-electron
+/electron/dist
+/renderer/dist
+/coverage
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# IDE files
+.idea
+.vscode
+
+# OS generated
+.DS_Store

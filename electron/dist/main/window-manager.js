@@ -43,6 +43,7 @@ class WindowManager {
         this.mainWindow = null;
     }
     async createMainWindow() {
+        const iconPath = path.join(__dirname, '../../resources/icons/icon.png');
         this.mainWindow = new electron_1.BrowserWindow({
             width: 1280,
             height: 800,
@@ -55,6 +56,7 @@ class WindowManager {
                 sandbox: false,
             },
             title: 'Scrape-Y',
+            icon: iconPath,
             show: false, // Don't show until ready
         });
         // Show window when ready
