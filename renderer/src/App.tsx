@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from './services/api-client';
 import { ProductsTable } from './components/ProductsTable';
-import { BrandSelection } from './components/BrandSelection';
+import { ScrapingOptions } from './components/ScrapingOptions';
 
 function App() {
   const [brands, setBrands] = useState<any[]>([]);
@@ -70,40 +70,17 @@ function App() {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>Scrape-Y - Brand Price Tracker</h1>
 
-      <BrandSelection
+      <ScrapingOptions
         brands={brands}
         selectedBrand={selectedBrand}
         onBrandSelect={setSelectedBrand}
         newBrandName={newBrandName}
         onNewBrandNameChange={setNewBrandName}
         onAddBrand={handleAddBrand}
+        sites={sites}
+        scrapingSite={scraping}
+        onScrapeSite={handleScrape}
       />
-
-      {/* Scraper Controls */}
-      <div style={{ marginBottom: '30px' }}>
-        <h2>Scrape Price from Sites</h2>
-        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-          {sites.map((site) => (
-            <button
-              key={site}
-              onClick={() => handleScrape(site)}
-              disabled={scraping === site}
-              style={{
-                padding: '12px 24px',
-                background: scraping === site ? '#ccc' : '#2196F3',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: scraping === site ? 'not-allowed' : 'pointer',
-                fontSize: '16px',
-                textTransform: 'capitalize',
-              }}
-            >
-              {scraping === site ? 'Scraping...' : `Scrape ${site}`}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Products Table */}
       <ProductsTable products={products} />
