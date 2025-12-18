@@ -149,6 +149,7 @@ export const RecentScrapingJobs: React.FC<RecentScrapingJobsProps> = ({
         <table style={styles.table}>
           <thead>
             <tr>
+              <th style={styles.th}>Brand</th>
               <th style={styles.th}>Sites</th>
               <th style={styles.th}>Status</th>
               <th style={styles.th}>Products</th>
@@ -164,6 +165,9 @@ export const RecentScrapingJobs: React.FC<RecentScrapingJobsProps> = ({
                   onClick={() => onJobSelect?.(job)}
                   style={styles.row(isSelected, !!onJobSelect)}
                 >
+                  <td style={styles.td} title={job.brand}>
+                    {job.brand || '—'}
+                  </td>
                   <td style={styles.td}>
                     <div style={styles.siteList}>
                       {(job.sites || []).map((site) => (

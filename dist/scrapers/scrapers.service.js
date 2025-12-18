@@ -61,8 +61,6 @@ let ScrapersService = ScrapersService_1 = class ScrapersService {
         try {
             job.status = scraping_job_entity_1.JobStatus.RUNNING;
             await this.jobRepository.save(job);
-            this.logger.log('Clearing existing products from database');
-            await this.productRepository.clear();
             let totalCreated = 0;
             let totalUpdated = 0;
             let totalScraped = 0;

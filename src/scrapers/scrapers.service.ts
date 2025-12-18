@@ -71,10 +71,6 @@ export class ScrapersService {
       job.status = JobStatus.RUNNING;
       await this.jobRepository.save(job);
 
-      // Clear all existing products before starting new scrape
-      this.logger.log('Clearing existing products from database');
-      await this.productRepository.clear();
-
       let totalCreated = 0;
       let totalUpdated = 0;
       let totalScraped = 0;
