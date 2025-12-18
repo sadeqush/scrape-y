@@ -40,6 +40,15 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  headerTitleGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: '8px',
+  },
   title: {
     fontSize: '18px',
     fontWeight: '600',
@@ -100,6 +109,21 @@ const styles = {
     fontSize: '13px',
     fontWeight: '500',
     transition: 'all 0.2s',
+  },
+  exportButton: {
+    padding: '8px 16px',
+    background: '#0176d3',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '13px',
+    fontWeight: '500',
+    transition: 'background 0.2s',
+  },
+  exportIcon: {
+    marginRight: '6px',
+    fontSize: '14px',
   },
   tableWrapper: {
     overflow: 'auto',
@@ -258,14 +282,144 @@ export function ProductsTable({ products }: ProductsTableProps) {
     setColumnFilters([]);
   };
 
+  const getRowValues = () =>
+    table.getRowModel().rows.map((row) => {
+      const { name, brand, site, price, scrapedAt } = row.original;
+      return { name, brand, site, price, scrapedAt };
+    });
+
+  const escapeCsvValue = (value: string | number | undefined) => {
+    const stringValue = value === undefined || value === null ? '' : String(value);
+    return `"${stringValue.replace(/"/g, '""')}"`;
+  };
+
+  const escapeExcelValue = (value: string | number | undefined) => {
+    const stringValue = value === undefined || value === null ? '' : String(value);
+    return stringValue
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  };
+
+  const handleExportCsv = () => {
+    const headers = [
+      'Product Name',
+      'Brand',
+      'Site',
+      'Price',
+      'Scraped At',
+    ];
+
+    const rows = getRowValues();
+
+    const csvContent = [headers, ...rows.map((row) => [
+      row.name,
+      row.brand,
+      row.site,
+      row.price,
+      row.scrapedAt,
+    ])]
+      .map((rowValues) => rowValues.map((value) => escapeCsvValue(value)).join(','))
+      .join('\r\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'scraped-products.csv');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportExcel = () => {
+    const headers = ['Product Name', 'Brand', 'Site', 'Price', 'Scraped At'];
+    const rows = getRowValues();
+
+    const headerRow = `<tr>${headers
+      .map((label) => `<th>${escapeExcelValue(label)}</th>`)
+      .join('')}</tr>`;
+
+    const bodyRows = rows
+      .map(
+        (row) =>
+          `<tr>${[
+            row.name,
+            row.brand,
+            row.site,
+            row.price,
+            row.scrapedAt,
+          ]
+            .map((value) => `<td>${escapeExcelValue(value)}</td>`)
+            .join('')}</tr>`,
+      )
+      .join('');
+
+    const htmlContent = [
+      '<!DOCTYPE html>',
+      '<html>',
+      '<head>',
+      '<meta charset="UTF-8">',
+      '</head>',
+      '<body>',
+      '<table>',
+      headerRow,
+      bodyRows,
+      '</table>',
+      '</body>',
+      '</html>',
+    ].join('');
+
+    const blob = new Blob([htmlContent], {
+      type: 'application/vnd.ms-excel;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'scraped-products.xls');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div style={styles.container}>
       {/* Header */}
       <div style={styles.header}>
-        <h2 style={styles.title}>Scraped Products</h2>
-        <span style={styles.badge}>
-          {table.getRowModel().rows.length} items
-        </span>
+        <div style={styles.headerTitleGroup}>
+          <h2 style={styles.title}>Scraped Products</h2>
+          <span style={styles.badge}>
+            {table.getRowModel().rows.length} items
+          </span>
+        </div>
+        <div style={styles.buttonGroup}>
+          <button
+            type="button"
+            style={styles.exportButton}
+            onClick={handleExportCsv}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#0255a1')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#0176d3')}
+          >
+            <span style={styles.exportIcon} aria-hidden="true">
+              📁
+            </span>
+            CSV Export
+          </button>
+          <button
+            type="button"
+            style={styles.exportButton}
+            onClick={handleExportExcel}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#0255a1')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#0176d3')}
+          >
+            <span style={styles.exportIcon} aria-hidden="true">
+              📊
+            </span>
+            Excel Export
+          </button>
+        </div>
       </div>
 
       {/* Filter Bar */}
