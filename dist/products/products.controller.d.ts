@@ -3,7 +3,7 @@ import { Product } from '../database/entities/product.entity';
 export declare class ProductsController {
     private readonly productsService;
     constructor(productsService: ProductsService);
-    findAll(site?: string, category?: string, inStock?: string, minPrice?: string, maxPrice?: string, search?: string, page?: number, limit?: number): Promise<{
+    findAll(site?: string, brand?: string, category?: string, inStock?: string, minPrice?: string, maxPrice?: string, search?: string, page?: number, limit?: number): Promise<{
         products: Product[];
         total: number;
         page: number;

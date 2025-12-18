@@ -32,6 +32,11 @@ let ProductsService = class ProductsService {
                 category: filters.category,
             });
         }
+        if (filters.brand) {
+            query.andWhere('product.brand = :brand', {
+                brand: filters.brand,
+            });
+        }
         if (filters.inStock !== undefined) {
             query.andWhere('product.inStock = :inStock', {
                 inStock: filters.inStock,

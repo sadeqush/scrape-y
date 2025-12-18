@@ -24,7 +24,10 @@ export class TechLandScraper extends BaseScraper {
     super('techland');
   }
 
-  async searchByBrand(brandName: string, maxPages: number = 2): Promise<ProductData[]> {
+  async searchByBrand(
+    brandName: string,
+    maxPages: number = 2,
+  ): Promise<ProductData[]> {
     const allProducts: ProductData[] = [];
     let calculatedMaxPages = maxPages;
 
@@ -38,19 +41,27 @@ export class TechLandScraper extends BaseScraper {
 
           // On first page, calculate maxPages from pagination text
           if (page === 1) {
-            const paginationText = $('div').filter((i, elem) => {
-              const text = $(elem).text().trim();
-              return /Showing\s+\d+\s+out\s+of\s+\d+\s+products?/i.test(text);
-            }).first().text().trim();
+            const paginationText = $('div')
+              .filter((i, elem) => {
+                const text = $(elem).text().trim();
+                return /Showing\s+\d+\s+out\s+of\s+\d+\s+products?/i.test(text);
+              })
+              .first()
+              .text()
+              .trim();
 
             if (paginationText) {
-              const match = paginationText.match(/Showing\s+(\d+)\s+out\s+of\s+(\d+)\s+products?/i);
+              const match = paginationText.match(
+                /Showing\s+(\d+)\s+out\s+of\s+(\d+)\s+products?/i,
+              );
               if (match) {
                 const x = parseInt(match[1], 10);
                 const y = parseInt(match[2], 10);
                 if (x > 0 && y > 0) {
                   calculatedMaxPages = Math.ceil(y / x);
-                  this.logger.log(`Calculated maxPages: ${calculatedMaxPages} (${y} total products, ${x} per page)`);
+                  this.logger.log(
+                    `Calculated maxPages: ${calculatedMaxPages} (${y} total products, ${x} per page)`,
+                  );
                 }
               }
             }
@@ -101,7 +112,9 @@ export class TechLandScraper extends BaseScraper {
                 .trim();
 
               const price = this.extractPrice(priceText);
-              const originalPrice = originalPriceText ? this.extractPrice(originalPriceText) : undefined;
+              const originalPrice = originalPriceText
+                ? this.extractPrice(originalPriceText)
+                : undefined;
 
               const product = this.normalizeProductData({
                 name,
@@ -109,14 +122,18 @@ export class TechLandScraper extends BaseScraper {
                 originalPrice,
                 brand: brandName,
                 site: 'techland',
-                url: productUrlRaw ? this.normalizeUrl(productUrlRaw) : undefined,
+                url: productUrlRaw
+                  ? this.normalizeUrl(productUrlRaw)
+                  : undefined,
                 imageUrl: imageUrl ? this.normalizeUrl(imageUrl) : undefined,
                 inStock: stockText.toLowerCase().includes('in stock'),
               });
 
               products.push(product);
             } catch (error) {
-              this.logger.warn(`Failed to parse product ${i}: ${error.message}`);
+              this.logger.warn(
+                `Failed to parse product ${i}: ${error.message}`,
+              );
             }
           });
 

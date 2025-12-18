@@ -41,10 +41,14 @@ let TechLandScraper = class TechLandScraper extends base_scraper_1.BaseScraper {
                     const $ = await this.fetchHtml(searchUrl);
                     const products = [];
                     if (page === 1) {
-                        const paginationText = $('div').filter((i, elem) => {
+                        const paginationText = $('div')
+                            .filter((i, elem) => {
                             const text = $(elem).text().trim();
                             return /Showing\s+\d+\s+out\s+of\s+\d+\s+products?/i.test(text);
-                        }).first().text().trim();
+                        })
+                            .first()
+                            .text()
+                            .trim();
                         if (paginationText) {
                             const match = paginationText.match(/Showing\s+(\d+)\s+out\s+of\s+(\d+)\s+products?/i);
                             if (match) {
@@ -88,14 +92,18 @@ let TechLandScraper = class TechLandScraper extends base_scraper_1.BaseScraper {
                                 .text()
                                 .trim();
                             const price = this.extractPrice(priceText);
-                            const originalPrice = originalPriceText ? this.extractPrice(originalPriceText) : undefined;
+                            const originalPrice = originalPriceText
+                                ? this.extractPrice(originalPriceText)
+                                : undefined;
                             const product = this.normalizeProductData({
                                 name,
                                 price,
                                 originalPrice,
                                 brand: brandName,
                                 site: 'techland',
-                                url: productUrlRaw ? this.normalizeUrl(productUrlRaw) : undefined,
+                                url: productUrlRaw
+                                    ? this.normalizeUrl(productUrlRaw)
+                                    : undefined,
                                 imageUrl: imageUrl ? this.normalizeUrl(imageUrl) : undefined,
                                 inStock: stockText.toLowerCase().includes('in stock'),
                             });

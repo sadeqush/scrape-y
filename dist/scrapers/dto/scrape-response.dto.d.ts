@@ -1,6 +1,6 @@
 export declare class ScrapeResponseDto {
     jobId: string;
-    site: string;
+    sites: string[];
     status: string;
     message: string;
     startedAt: Date;

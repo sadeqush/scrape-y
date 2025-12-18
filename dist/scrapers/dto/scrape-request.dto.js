@@ -12,15 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScrapeRequestDto = void 0;
 const class_validator_1 = require("class-validator");
 class ScrapeRequestDto {
-    site;
+    sites;
     brand;
     maxPages;
 }
 exports.ScrapeRequestDto = ScrapeRequestDto;
 __decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], ScrapeRequestDto.prototype, "site", void 0);
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ArrayNotEmpty)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], ScrapeRequestDto.prototype, "sites", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)

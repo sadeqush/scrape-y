@@ -8,6 +8,7 @@ export class WindowManager {
   constructor(private nestPort: number) {}
 
   async createMainWindow(): Promise<BrowserWindow> {
+    const iconPath = path.join(__dirname, '../../resources/icons/icon.png');
     this.mainWindow = new BrowserWindow({
       width: 1280,
       height: 800,
@@ -20,6 +21,7 @@ export class WindowManager {
         sandbox: false,
       },
       title: 'Scrape-Y',
+      icon: iconPath,
       show: false, // Don't show until ready
     });
 

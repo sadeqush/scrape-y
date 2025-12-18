@@ -31,11 +31,16 @@ let ScrapersService = ScrapersService_1 = class ScrapersService {
         this.jobRepository = jobRepository;
     }
     async startScraping(request) {
-        if (!this.scraperFactory.hasScraper(request.site)) {
-            throw new Error(`Invalid site: ${request.site}`);
+        const uniqueSites = Array.from(new Set(request.sites));
+        if (!uniqueSites.length) {
+            throw new Error('At least one site must be provided');
+        }
+        const invalidSites = uniqueSites.filter((site) => !this.scraperFactory.hasScraper(site));
+        if (invalidSites.length) {
+            throw new Error(`Invalid sites: ${invalidSites.join(', ')}`);
         }
         const job = this.jobRepository.create({
-            site: request.site,
+            sites: uniqueSites,
             brand: request.brand,
             status: scraping_job_entity_1.JobStatus.PENDING,
             metadata: { request },
@@ -46,7 +51,7 @@ let ScrapersService = ScrapersService_1 = class ScrapersService {
         });
         return {
             jobId: job.id,
-            site: request.site,
+            sites: job.sites,
             status: scraping_job_entity_1.JobStatus.PENDING,
             message: 'Scraping job started',
             startedAt: job.startedAt,
@@ -56,22 +61,24 @@ let ScrapersService = ScrapersService_1 = class ScrapersService {
         try {
             job.status = scraping_job_entity_1.JobStatus.RUNNING;
             await this.jobRepository.save(job);
-            this.logger.log('Clearing existing products from database');
-            await this.productRepository.clear();
-            const scraper = this.scraperFactory.getScraper(request.site);
-            this.logger.log(`Starting to scrape brand "${request.brand}" from ${request.site}`);
-            const maxPages = request.maxPages || 2;
-            const products = await scraper.searchByBrand(request.brand, maxPages);
             let totalCreated = 0;
             let totalUpdated = 0;
-            for (const productData of products) {
-                const result = await this.saveProduct(productData);
-                if (result === 'created')
-                    totalCreated++;
-                if (result === 'updated')
-                    totalUpdated++;
+            let totalScraped = 0;
+            const maxPages = request.maxPages || 2;
+            for (const site of job.sites) {
+                this.logger.log(`Starting to scrape brand "${request.brand}" from ${site}`);
+                const scraper = this.scraperFactory.getScraper(site);
+                const products = await scraper.searchByBrand(request.brand, maxPages);
+                totalScraped += products.length;
+                for (const productData of products) {
+                    const result = await this.saveProduct(productData);
+                    if (result === 'created')
+                        totalCreated++;
+                    if (result === 'updated')
+                        totalUpdated++;
+                }
+                this.logger.log(`Completed scraping ${products.length} products from ${site}`);
             }
-            const totalScraped = products.length;
             job.status = scraping_job_entity_1.JobStatus.COMPLETED;
             job.completedAt = new Date();
             job.productsScraped = totalScraped;

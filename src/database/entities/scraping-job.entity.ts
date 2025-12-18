@@ -14,14 +14,12 @@ export enum JobStatus {
 }
 
 @Entity('scraping_jobs')
-@Index(['site', 'status'])
 export class ScrapingJob {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  @Index()
-  site: string;
+  @Column({ type: 'simple-json', nullable: true, default: '[]' })
+  sites: string[];
 
   @Column({
     type: 'text',

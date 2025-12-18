@@ -6,7 +6,7 @@ export declare enum JobStatus {
 }
 export declare class ScrapingJob {
     id: string;
-    site: string;
+    sites: string[];
     status: JobStatus;
     brand: string;
     productsScraped: number;

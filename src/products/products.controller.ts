@@ -16,6 +16,7 @@ export class ProductsController {
   @Get()
   async findAll(
     @Query('site') site?: string,
+    @Query('brand') brand?: string,
     @Query('category') category?: string,
     @Query('inStock') inStock?: string,
     @Query('minPrice') minPrice?: string,
@@ -31,8 +32,10 @@ export class ProductsController {
   }> {
     const filters: ProductFilters = {
       site,
+      brand,
       category,
-      inStock: inStock === 'true' ? true : inStock === 'false' ? false : undefined,
+      inStock:
+        inStock === 'true' ? true : inStock === 'false' ? false : undefined,
       minPrice: minPrice ? parseFloat(minPrice) : undefined,
       maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
       search,

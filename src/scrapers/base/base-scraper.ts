@@ -144,7 +144,9 @@ export abstract class BaseScraper implements IScraper {
       price: raw.price || 0,
       brand: raw.brand?.trim() || '',
       site: this.siteName,
-      ...(raw.originalPrice !== undefined && { originalPrice: raw.originalPrice }),
+      ...(raw.originalPrice !== undefined && {
+        originalPrice: raw.originalPrice,
+      }),
       ...(raw.url && { url: raw.url }),
       ...(raw.imageUrl && { imageUrl: raw.imageUrl }),
       ...(raw.inStock !== undefined && { inStock: raw.inStock }),

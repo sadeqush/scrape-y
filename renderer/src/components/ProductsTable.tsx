@@ -172,7 +172,9 @@ export function ProductsTable({ products }: ProductsTableProps) {
     () => [
       columnHelper.accessor('name', {
         header: 'Product Name',
-        cell: (info) => <span style={{ fontWeight: '500' }}>{info.getValue()}</span>,
+        cell: (info) => (
+          <span style={{ fontWeight: '500' }}>{info.getValue()}</span>
+        ),
         enableSorting: true,
         enableColumnFilter: true,
       }),
@@ -195,15 +197,17 @@ export function ProductsTable({ products }: ProductsTableProps) {
       columnHelper.accessor('site', {
         header: 'Site',
         cell: (info) => (
-          <span style={{
-            textTransform: 'capitalize',
-            background: '#f0f9ff',
-            color: '#0369a1',
-            padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '12px',
-            fontWeight: '500',
-          }}>
+          <span
+            style={{
+              textTransform: 'capitalize',
+              background: '#f0f9ff',
+              color: '#0369a1',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              fontSize: '12px',
+              fontWeight: '500',
+            }}
+          >
             {info.getValue()}
           </span>
         ),
@@ -221,7 +225,7 @@ export function ProductsTable({ products }: ProductsTableProps) {
         enableColumnFilter: false,
       }),
     ],
-    []
+    [],
   );
 
   const table = useReactTable({
@@ -259,7 +263,9 @@ export function ProductsTable({ products }: ProductsTableProps) {
       {/* Header */}
       <div style={styles.header}>
         <h2 style={styles.title}>Scraped Products</h2>
-        <span style={styles.badge}>{table.getRowModel().rows.length} items</span>
+        <span style={styles.badge}>
+          {table.getRowModel().rows.length} items
+        </span>
       </div>
 
       {/* Filter Bar */}
@@ -273,7 +279,11 @@ export function ProductsTable({ products }: ProductsTableProps) {
               borderColor: filterValue ? '#0176d3' : '#d4d4d8',
             }}
             onFocus={(e) => (e.currentTarget.style.borderColor = '#0176d3')}
-            onBlur={(e) => (e.currentTarget.style.borderColor = filterValue ? '#0176d3' : '#d4d4d8')}
+            onBlur={(e) =>
+              (e.currentTarget.style.borderColor = filterValue
+                ? '#0176d3'
+                : '#d4d4d8')
+            }
           >
             <option value="name">Product Name</option>
             <option value="brand">Brand</option>
@@ -289,7 +299,11 @@ export function ProductsTable({ products }: ProductsTableProps) {
               borderColor: filterValue ? '#0176d3' : '#d4d4d8',
             }}
             onFocus={(e) => (e.currentTarget.style.borderColor = '#0176d3')}
-            onBlur={(e) => (e.currentTarget.style.borderColor = filterValue ? '#0176d3' : '#d4d4d8')}
+            onBlur={(e) =>
+              (e.currentTarget.style.borderColor = filterValue
+                ? '#0176d3'
+                : '#d4d4d8')
+            }
           />
         </div>
 
@@ -322,17 +336,38 @@ export function ProductsTable({ products }: ProductsTableProps) {
                   return (
                     <th
                       key={header.id}
-                      style={styles.th(hoveredHeader === header.id, !!sortState)}
+                      style={styles.th(
+                        hoveredHeader === header.id,
+                        !!sortState,
+                      )}
                       onClick={header.column.getToggleSortingHandler()}
                       onMouseEnter={() => setHoveredHeader(header.id)}
                       onMouseLeave={() => setHoveredHeader(null)}
                     >
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                         {header.column.getCanSort() && (
                           <span style={styles.sortIcon(sortState)}>
-                            <span style={{ color: sortState === 'asc' ? '#0176d3' : '#d4d4d8' }}>▲</span>
-                            <span style={{ color: sortState === 'desc' ? '#0176d3' : '#d4d4d8', marginTop: '-2px' }}>▼</span>
+                            <span
+                              style={{
+                                color:
+                                  sortState === 'asc' ? '#0176d3' : '#d4d4d8',
+                              }}
+                            >
+                              ▲
+                            </span>
+                            <span
+                              style={{
+                                color:
+                                  sortState === 'desc' ? '#0176d3' : '#d4d4d8',
+                                marginTop: '-2px',
+                              }}
+                            >
+                              ▼
+                            </span>
                           </span>
                         )}
                       </div>
@@ -348,16 +383,36 @@ export function ProductsTable({ products }: ProductsTableProps) {
                 <td colSpan={columns.length} style={styles.emptyState}>
                   {products.length === 0 ? (
                     <div>
-                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>📦</div>
-                      <div style={{ fontSize: '16px', fontWeight: '500', marginBottom: '8px', color: '#3e3e3c' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                        📦
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          marginBottom: '8px',
+                          color: '#3e3e3c',
+                        }}
+                      >
                         No products yet
                       </div>
-                      <div>Select a brand and start scraping to see products here</div>
+                      <div>
+                        Select a brand and start scraping to see products here
+                      </div>
                     </div>
                   ) : (
                     <div>
-                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
-                      <div style={{ fontSize: '16px', fontWeight: '500', marginBottom: '8px', color: '#3e3e3c' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                        🔍
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          marginBottom: '8px',
+                          color: '#3e3e3c',
+                        }}
+                      >
                         No matching products
                       </div>
                       <div>Try adjusting your filters to see more results</div>
@@ -375,7 +430,10 @@ export function ProductsTable({ products }: ProductsTableProps) {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} style={styles.td}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
                   ))}
                 </tr>
@@ -389,11 +447,14 @@ export function ProductsTable({ products }: ProductsTableProps) {
       {products.length > 0 && (
         <div style={styles.footer}>
           <div>
-            Showing <strong>{table.getRowModel().rows.length}</strong> of <strong>{products.length}</strong> products
+            Showing <strong>{table.getRowModel().rows.length}</strong> of{' '}
+            <strong>{products.length}</strong> products
           </div>
           {filterValue && (
             <div style={{ color: '#0176d3' }}>
-              🔎 Filtering by {selectedColumn === 'name' ? 'product name' : selectedColumn}: "{filterValue}"
+              🔎 Filtering by{' '}
+              {selectedColumn === 'name' ? 'product name' : selectedColumn}: "
+              {filterValue}"
             </div>
           )}
         </div>

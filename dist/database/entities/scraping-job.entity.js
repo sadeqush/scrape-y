@@ -20,7 +20,7 @@ var JobStatus;
 })(JobStatus || (exports.JobStatus = JobStatus = {}));
 let ScrapingJob = class ScrapingJob {
     id;
-    site;
+    sites;
     status;
     brand;
     productsScraped;
@@ -37,10 +37,9 @@ __decorate([
     __metadata("design:type", String)
 ], ScrapingJob.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    (0, typeorm_1.Index)(),
-    __metadata("design:type", String)
-], ScrapingJob.prototype, "site", void 0);
+    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true, default: '[]' }),
+    __metadata("design:type", Array)
+], ScrapingJob.prototype, "sites", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'text',
@@ -83,7 +82,6 @@ __decorate([
     __metadata("design:type", Object)
 ], ScrapingJob.prototype, "metadata", void 0);
 exports.ScrapingJob = ScrapingJob = __decorate([
-    (0, typeorm_1.Entity)('scraping_jobs'),
-    (0, typeorm_1.Index)(['site', 'status'])
+    (0, typeorm_1.Entity)('scraping_jobs')
 ], ScrapingJob);
 //# sourceMappingURL=scraping-job.entity.js.map

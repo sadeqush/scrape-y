@@ -1,10 +1,11 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from 'electron';
 import { NestServerManager } from './nest-server';
 import { WindowManager } from './window-manager';
 import { registerIpcHandlers } from './ipc-handlers';
 
 let nestServer: NestServerManager;
 let windowManager: WindowManager;
+
 
 async function initialize() {
   try {
@@ -20,7 +21,6 @@ async function initialize() {
     // Create main window
     windowManager = new WindowManager(port);
     await windowManager.createMainWindow();
-
     console.log('Scrape-Y initialized successfully');
   } catch (error) {
     console.error('Failed to initialize:', error);
